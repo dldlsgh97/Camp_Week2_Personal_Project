@@ -2,25 +2,37 @@
 {
     internal class Program
     {
-        static Inventory playerInventory = new Inventory(10);
+        static Inventory playerInventory;
+        static List<Item> equippedItems = new List<Item>();
 
         static PlayerState playerState;
         static string PlayerName = "";
-        static string PlayerClass = "";
+        static string PlayerClass = "전사";
 
 
         static void Main(string[] args)
         {
+            equippedItems.Clear();
             Console.Write("모험가님의 이름을 알려주세요! :");
             PlayerName = Console.ReadLine();
-            Console.WriteLine($"{PlayerName} 님 이시군요! 그럼 직업을 알려주세요!");
-            PlayerClass = Console.ReadLine();
-            playerState = new PlayerState(1, PlayerName, PlayerClass, 10, 5, 100, 0);
+            Console.WriteLine($"{PlayerName} 님 이시군요!");
+            playerState = new PlayerState(1, PlayerName, PlayerClass, 10, 5, 100, 1500);
+
+            playerInventory = new Inventory(playerState);
+
+            Item testItem1 = new Item("무쇠갑옷",5,ItemType.Armor, "무쇠로 만들어져 튼튼한 갑옷입니다.");
+            Item testItem2 = new Item("스파르타의 창", 7, ItemType.Wepon, "스파르타의 전사들이 사용했다는 전설의 창입니다.");
+            Item testItem3 = new Item("낡은 검", 2, ItemType.Wepon, "쉽게 볼 수 있는 낡은 검 입니다.");
+            playerInventory.AddItem(testItem1);
+            playerInventory.AddItem(testItem2);
+            playerInventory.AddItem(testItem3);
+
+
             while (true)
             {
                 StartGame();
             }
-            
+
         }
 
         static void StartGame()
@@ -38,8 +50,8 @@
             Console.WriteLine();
             Console.WriteLine();
             Console.Write("원하는 행동을 입력하세요 : ");
-            int inputNum =int.Parse(Console.ReadLine());
-            if(inputNum == 1 )
+            int inputNum = int.Parse(Console.ReadLine());
+            if (inputNum == 1)
             {
                 //플레이어 상태창으로 이동
                 switch (playerState.DisplayPlayerState())
@@ -48,7 +60,7 @@
                         StartGame();
                         break;
                 }
-                
+
             }
             else if (inputNum == 2)
             {
@@ -56,6 +68,7 @@
                 {
                     case 1:
                         //장착관리 페이지로 이동
+                        EquipManage();
                         break;
                     case 2:
                         StartGame();
@@ -73,7 +86,7 @@
             }
         }
 
-        
+
 
         static void Move()
         {
@@ -90,18 +103,82 @@
             {
                 Console.WriteLine("상점 이동");
             }
-            else if(input == 2)
+            else if (input == 2)
             {
                 Console.WriteLine("사냥 필드 이동");
             }
             else { Console.WriteLine("잘못된 입력입니다"); }
         }
 
+        static void EquipManage()
+        {
+            InventoryRefesh();
+            
+            int input = int.Parse(Console.ReadLine());
+            if(input == 0)
+            {
+                return;
+            }
 
+            int index = input - 1;
+            if(index < 0 || index >= playerInventory.items.Count)
+            {
+                Console.WriteLine("잘못된 입력입니다");
+                Thread.Sleep(1000);
+                EquipManage();
+            }
+            
+            Item selectItem = playerInventory.items[index];
+
+            bool isEquipped = playerState.IsEquipped(selectItem);
+
+            if(!isEquipped)
+            {
+                playerState.EquipItem(selectItem);                
+            }
+            else
+            {
+                playerState.UnEquipItem(selectItem);
+            }
+            EquipManage();
+
+
+        }
+
+        static void InventoryRefesh()
+        {
+            Console.Clear();
+            Console.WriteLine();
+            Console.WriteLine("장착 관리");
+            Console.WriteLine();
+            Console.WriteLine("[아이템 목록]");
+            Console.WriteLine();;
+            for (int i = 0; i < playerInventory.items.Count; i++)
+            {
+                if (playerState.GetEquippedItems().Contains(playerInventory.items[i]))
+                {
+                    Console.WriteLine($"[E] {i + 1}. {playerInventory.items[i].DisplayItem()}");
+                    Console.WriteLine();
+                }
+                else
+                {
+                    Console.WriteLine($"{i + 1}. {playerInventory.items[i].DisplayItem()}");
+                    Console.WriteLine();
+                }
+
+                
+            }
+            Console.WriteLine();
+            Console.WriteLine("장착할 아이템을 선택하세요 :");
+            Console.WriteLine("0: 나가기");
+
+        }
 
     }
     public class PlayerState
     {
+        private List<Item> equippedItems;
+
         public int Level { get; set; }
         public string Name { get; set; }
         public string Class { get; set; }
@@ -120,57 +197,109 @@
             Defense = defense;
             MaxHp = maxHp;
             Gold = gold;
+            equippedItems = new List<Item>();
         }
         public int DisplayPlayerState()
         {
             int input;
-            Console.Clear();
-            Console.WriteLine();
-            Console.WriteLine("상태창");
-            Console.WriteLine();
-            Console.WriteLine($"LV : {Level}");
-            Console.WriteLine($"{Name} ({Class})");
-            Console.WriteLine($"공격력 : {Attack}");
-            Console.WriteLine($"방어력 : {Defense}");
-            Console.WriteLine($"체  력 : {MaxHp}");
-            Console.WriteLine($" Gold  : {Gold}");
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("0. 나가기");
-            Console.WriteLine();
-            Console.WriteLine("원하시는 행동을 입력해주세요");
+            RefreshPlayerState();
             input = int.Parse(Console.ReadLine());
             return input;
+        }
 
+        public void RefreshPlayerState()
+        {
+            int weponAttack = 0;
+            int weponDefense = 0;
+
+            foreach(var item in equippedItems)
+            {
+                if(item.Type == ItemType.Wepon)
+                {
+                    weponAttack += item.Stat;
+                }
+                else if(item.Type == ItemType.Armor)
+                {
+                    weponDefense += item.Stat;
+                }
+            }
+            if(equippedItems.Count == 0)
+            {
+                Console.Clear();
+                Console.WriteLine();
+                Console.WriteLine("상태창");
+                Console.WriteLine();
+                Console.WriteLine($"LV : {Level}");
+                Console.WriteLine($"{Name} ({Class})");
+                Console.WriteLine($"공격력 : {Attack}");
+                Console.WriteLine($"방어력 : {Defense}");
+                Console.WriteLine($"체  력 : {MaxHp}");
+                Console.WriteLine($" Gold  : {Gold} G");
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("0. 나가기");
+                Console.WriteLine();
+                Console.WriteLine("원하시는 행동을 입력해주세요");
+            }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine();
+                Console.WriteLine("상태창");
+                Console.WriteLine();
+                Console.WriteLine($"LV : {Level}");
+                Console.WriteLine($"{Name} ({Class})");
+                Console.WriteLine($"공격력 : {Attack+ weponAttack} + (+{weponAttack})");
+                Console.WriteLine($"방어력 : {Defense + weponDefense}+ (+{weponDefense})");
+                Console.WriteLine($"체  력 : {MaxHp}");
+                Console.WriteLine($" Gold  : {Gold} G");
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("0. 나가기");
+                Console.WriteLine();
+                Console.WriteLine("원하시는 행동을 입력해주세요");
+
+            }
+            
+            
+        }
+
+        public void EquipItem(Item item)
+        {
+            equippedItems.Add(item);
+        }
+
+        public void UnEquipItem(Item item)
+        {
+            equippedItems.Remove(item);
+        }
+        public bool IsEquipped(Item item)
+        {
+            return equippedItems.Contains(item);
+        }
+        public List<Item> GetEquippedItems()
+        {
+            return equippedItems;
         }
     }
 
     public class Inventory
     {
-        private string[] _items;
-        private int _itemsAmount;
-        private int _itemCount;
+        public List<Item> items;
+        public PlayerState playerState;
 
-        public Inventory(int _itemsAmount)
+        public Inventory(PlayerState playerState)
         {
-            _items = new string[_itemsAmount];
-            _itemCount = 0;
+            items = new List<Item>();
+            this.playerState = playerState;
         }
 
-        public void AddItem(string item)
+        public void AddItem(Item item)
         {
-            if(_itemCount < _itemsAmount)
-            {
-                _items[_itemCount] = item;
-                _itemCount++;
-            }
-            else
-            {
-                Console.WriteLine("인벤토리가 가득 찼습니다.");
-            }
+            items.Add(item);
         }
 
-        public void RemoveItem(string item)
+        public void RemoveItem(Item item)
         {
             //아이템 삭제
             //판매 OR 삭제
@@ -178,21 +307,33 @@
 
         public int DesplayInventory()
         {
+            
             int input;
             Console.Clear();
             Console.WriteLine();
             Console.WriteLine("인벤토리");
             Console.WriteLine();
             Console.WriteLine("[아이템 목록]");
-            if(_itemCount == 0)
+            Console.WriteLine();
+            if (items.Count == 0)
             {
                 Console.WriteLine("인벤토리에 아무것도 없군요...");
             }
             else
             {
-                for (int i = 0; i < _itemCount; i++)
+                for (int i = 0; i < items.Count; i++)
                 {
-                    Console.WriteLine($"{i}. {_items[i]}");
+                    if (playerState.GetEquippedItems().Contains(items[i]))
+                    {
+                        Console.WriteLine($"- [E] {items[i].DisplayItem()}");
+                        Console.WriteLine();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"- {items[i].DisplayItem()}");
+                        Console.WriteLine();
+                    }
+                    
                 }
             }
 
@@ -201,9 +342,49 @@
             Console.WriteLine("1. 장착 관리");
             Console.WriteLine("0. 나가기");
             Console.WriteLine();
-            input = int.Parse( Console.ReadLine() );
-            
+            input = int.Parse(Console.ReadLine());
+
             return input;
+        }
+    }
+
+    public enum ItemType
+    {
+        Armor,
+        Wepon
+    }
+
+    public class Item
+    {
+        public string Name;
+        public string Description;
+        public ItemType Type;
+        public int Stat;
+
+        public Item(string name, int stat, ItemType type, string description)
+        {
+            Name = name;
+            Description = description;
+            Type = type;
+            Stat = stat;
+        }
+
+        public string DisplayItem()
+        {
+            string itemType;
+            switch (Type)
+            {
+                case ItemType.Armor:
+                    itemType = "방어력 +";
+                    break;
+                case ItemType.Wepon:
+                    itemType = "공격력 +";
+                    break;
+                default:
+                    itemType = "";
+                    break;
+            }
+            return $"{Name} | {itemType}{Stat} | {Description}";
         }
     }
 }
