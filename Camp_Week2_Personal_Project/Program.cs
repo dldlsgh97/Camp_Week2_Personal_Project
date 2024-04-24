@@ -27,6 +27,7 @@
             playerInventory.AddItem(testItem2);
             playerInventory.AddItem(testItem3);
 
+            
 
             while (true)
             {
@@ -90,6 +91,7 @@
 
         static void Move()
         {
+            Shop shop = new Shop(playerState);
             int input;
             Console.Clear();
             Console.WriteLine("현재 모험가님이 이동할 수 있는곳은 아래의 장소입니다.");
@@ -102,6 +104,7 @@
             if (input == 1)
             {
                 Console.WriteLine("상점 이동");
+                shop.DisplayProducts();
             }
             else if (input == 2)
             {
@@ -386,5 +389,77 @@
             }
             return $"{Name} | {itemType}{Stat} | {Description}";
         }
+    }
+
+    public class Shop
+    {
+        PlayerState playerState;
+        List<Item> product; 
+        public Shop(PlayerState playerState)
+        {
+            this.playerState = playerState;
+            product = new List<Item>();
+        }
+
+        public void AddProduct(Item item, int price)
+        {
+            product.Add(new ShopProduct(item,price));
+        }
+
+        public void DisplayProducts()
+        {
+            int input;
+            Console.Clear();
+            Console.WriteLine();
+            Console.WriteLine("상점");
+            Console.WriteLine();
+            Console.WriteLine("[보유 골드]");
+            Console.WriteLine($"{playerState.Gold} G");
+            Console.WriteLine();
+            Console.WriteLine("[아이템 목록]");
+            
+            Console.WriteLine("목록 출력");
+            Console.WriteLine("목록 출력");
+            Console.WriteLine("목록 출력");
+            Console.WriteLine("목록 출력");
+            Console.WriteLine();
+            Console.WriteLine("1. 아이템 구매");
+            Console.WriteLine("2. 아이템 판매");
+            Console.WriteLine("0. 나가기");
+            Console.WriteLine();
+            Console.WriteLine("원하는 행동을 입력해주세요");
+            input = int.Parse(Console.ReadLine());
+            if(input == 1)
+            {
+                //구매 로직
+            }
+            else if(input == 2)
+            {
+                //판매 로직
+            }
+            else if(input == 0)
+            {
+                //이전 화면으로 이동
+            }
+            else
+            {
+                Console.WriteLine("잘못된 입력입니다");
+            }
+
+        }
+    }
+
+    public class ShopProduct : Item
+    {
+        public int Price;
+        public ShopProduct(Item item, int price) : base(item.Name, item.Stat, item.Type, item.Description)
+        {
+            Price = price;
+        }
+
+        public string ProductsName()
+        {
+            return $"{Name} - 가격 : {Price}G";
+        } 
     }
 }
