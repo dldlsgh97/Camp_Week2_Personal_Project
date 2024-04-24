@@ -152,7 +152,7 @@
             Console.WriteLine("장착 관리");
             Console.WriteLine();
             Console.WriteLine("[아이템 목록]");
-            Console.WriteLine();;
+            Console.WriteLine();
             for (int i = 0; i < playerInventory.items.Count; i++)
             {
                 if (playerState.GetEquippedItems().Contains(playerInventory.items[i]))
@@ -249,8 +249,8 @@
                 Console.WriteLine();
                 Console.WriteLine($"LV : {Level}");
                 Console.WriteLine($"{Name} ({Class})");
-                Console.WriteLine($"공격력 : {Attack+ weponAttack} + (+{weponAttack})");
-                Console.WriteLine($"방어력 : {Defense + weponDefense}+ (+{weponDefense})");
+                Console.WriteLine($"공격력 : {Attack+ weponAttack} (+{weponAttack})");
+                Console.WriteLine($"방어력 : {Defense + weponDefense} (+{weponDefense})");
                 Console.WriteLine($"체  력 : {MaxHp}");
                 Console.WriteLine($" Gold  : {Gold} G");
                 Console.WriteLine();
