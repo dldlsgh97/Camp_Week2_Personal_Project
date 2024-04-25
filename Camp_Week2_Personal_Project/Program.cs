@@ -112,6 +112,7 @@ namespace Camp_Week2_Personal_Project
             Console.WriteLine("2. 사냥 필드");
             Console.WriteLine();
             Console.WriteLine("원하는 장소를 입력해주세요");
+            Console.WriteLine("나가기 : 0");
             input = int.Parse(Console.ReadLine());
             if (input == 1)
             {
@@ -124,7 +125,7 @@ namespace Camp_Week2_Personal_Project
                 int i = int.Parse(Console.ReadLine());
                 if (i == 0)
                 {
-                    Move();
+                    StartGame();
                 }
                 else
                 {
@@ -794,10 +795,25 @@ namespace Camp_Week2_Personal_Project
 
                     int damage = new Random().Next(20, 36) / 2;
                     Console.WriteLine($"체력이 {damage}만큼 감소합니다.");
+                    playerState.MaxHp -= damage;
+                    Console.WriteLine($"플레이어의 현재 체력 : {playerState.MaxHp}");
+                    Console.WriteLine("아쉽지만 방어력을 올려서 도전해 보세요!");
+                    Console.WriteLine();
+                    Console.WriteLine("돌아가기 : 0");
+                    int input = int.Parse(Console.ReadLine());
+                    if (input == 0) { DungeonEntrance(); }
+                    else { Console.WriteLine("잘못된 접근입니다"); }
                 }
                 else
                 {
                     Console.WriteLine("던전 클리어 성공!");
+                    Console.WriteLine("던전의 권장 방어력보다 플레이어의 방어력이 낮아 보상을 획득하지 못했습니다");
+                    Console.WriteLine("아쉽지만 방어력을 올려서 도전해 보세요!");
+                    Console.WriteLine();
+                    Console.WriteLine("돌아가기 : 0");
+                    int input = int.Parse(Console.ReadLine());
+                    if (input == 0) { DungeonEntrance(); }
+                    else { Console.WriteLine("잘못된 접근입니다"); }
                 }
             }
             else
