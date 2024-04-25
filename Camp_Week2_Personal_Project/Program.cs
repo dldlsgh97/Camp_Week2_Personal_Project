@@ -1,25 +1,29 @@
-﻿namespace Camp_Week2_Personal_Project
+﻿using System.Collections.Generic;
+
+namespace Camp_Week2_Personal_Project
 {
     internal class Program
     {
         static Inventory playerInventory;
         static List<Item> equippedItems = new List<Item>();
-
+        static List<ShopProduct> products = new List<ShopProduct>();
         static PlayerState playerState;
         static string PlayerName = "";
         static string PlayerClass = "전사";
+        static Shop shop;
 
 
         static void Main(string[] args)
         {
             equippedItems.Clear();
+            products.Clear();
             Console.Write("모험가님의 이름을 알려주세요! :");
             PlayerName = Console.ReadLine();
             Console.WriteLine($"{PlayerName} 님 이시군요!");
             playerState = new PlayerState(1, PlayerName, PlayerClass, 10, 5, 100, 1500);
 
             playerInventory = new Inventory(playerState);
-
+            
             Item testItem1 = new Item("무쇠갑옷",5,ItemType.Armor, "무쇠로 만들어져 튼튼한 갑옷입니다.");
             Item testItem2 = new Item("스파르타의 창", 7, ItemType.Wepon, "스파르타의 전사들이 사용했다는 전설의 창입니다.");
             Item testItem3 = new Item("낡은 검", 2, ItemType.Wepon, "쉽게 볼 수 있는 낡은 검 입니다.");
@@ -27,6 +31,14 @@
             playerInventory.AddItem(testItem2);
             playerInventory.AddItem(testItem3);
 
+            shop = new Shop(playerState, playerInventory);
+            shop.AddProduct(new ShopProduct(new Item("수련자 갑옷", 5, ItemType.Armor, "수련에 도움을 주는 갑옷입니다."),1000));
+            shop.AddProduct(new ShopProduct(new Item("무쇠갑옷", 9, ItemType.Armor, "무쇠로 만들어져 튼튼한 갑옷입니다."), 1500,true));
+            shop.AddProduct(new ShopProduct(new Item("스파르타의 갑옷", 15, ItemType.Armor, "스파르타의 전사들이 사용했다는 전설의 갑옷입니다."), 2000));
+            shop.AddProduct(new ShopProduct(new Item("낡은 검", 2, ItemType.Wepon, "쉽게 볼 수 있는 낡은 검 입니다."), 600));
+            shop.AddProduct(new ShopProduct(new Item("청동 도끼", 5, ItemType.Wepon, "어디선가 사용됐던거 같은 도끼입니다."), 1500));
+            shop.AddProduct(new ShopProduct(new Item("스파르타의 창", 7, ItemType.Wepon, "스파르타의 전사들이 사용했다는 전설의 창입니다."), 2000,true));
+            
 
             while (true)
             {
@@ -90,6 +102,7 @@
 
         static void Move()
         {
+            
             int input;
             Console.Clear();
             Console.WriteLine("현재 모험가님이 이동할 수 있는곳은 아래의 장소입니다.");
@@ -102,6 +115,7 @@
             if (input == 1)
             {
                 Console.WriteLine("상점 이동");
+                shop.DisplayProducts();
             }
             else if (input == 2)
             {
@@ -301,14 +315,26 @@
 
         public void RemoveItem(Item item)
         {
-            //아이템 삭제
-            //판매 OR 삭제
+            items.Remove(item);
         }
 
         public int DesplayInventory()
         {
             
             int input;
+            RefreshInventory();
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("1. 장착 관리");
+            Console.WriteLine("0. 나가기");
+            Console.WriteLine();
+            input = int.Parse(Console.ReadLine());
+
+            return input;
+        }
+        public void RefreshInventory()
+        {
             Console.Clear();
             Console.WriteLine();
             Console.WriteLine("인벤토리");
@@ -333,18 +359,9 @@
                         Console.WriteLine($"- {items[i].DisplayItem()}");
                         Console.WriteLine();
                     }
-                    
+
                 }
             }
-
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("1. 장착 관리");
-            Console.WriteLine("0. 나가기");
-            Console.WriteLine();
-            input = int.Parse(Console.ReadLine());
-
-            return input;
         }
     }
 
@@ -386,5 +403,256 @@
             }
             return $"{Name} | {itemType}{Stat} | {Description}";
         }
+    }
+
+    public class Shop
+    {
+        List<ShopProduct> products;
+        PlayerState playerState;
+        Inventory playerInventory;
+        public Shop(PlayerState playerState, Inventory playerInventory)
+        {
+            this.playerState = playerState;
+            products = new List<ShopProduct>();
+            this.playerInventory = playerInventory;
+
+        }
+
+        public void AddProduct(ShopProduct product)
+        {
+            products.Add(product);
+        }
+
+        public void DisplayProducts()
+        {
+            
+            int input;
+            RefreshShopProducts();
+            if(products.Count == 0)
+            {
+                Console.WriteLine("현재 판매하고있는 물품이 없습니다.");
+            }
+            else
+            {
+                for (int i = 0; i < products.Count; i++)
+                {
+                    Console.WriteLine(products[i].ProductsName());
+                    Console.WriteLine();
+                }
+            }
+            
+            Console.WriteLine();
+            Console.WriteLine("1. 아이템 구매");
+            Console.WriteLine("2. 아이템 판매");
+            Console.WriteLine("0. 나가기");
+            Console.WriteLine();
+            Console.WriteLine("원하는 행동을 입력해주세요");
+            input = int.Parse(Console.ReadLine());
+            if(input == 1)
+            {
+                //구매 로직
+                BuyProducts();
+            }
+            else if(input == 2)
+            {
+                //판매 로직
+                SellProduct();
+            }
+            else if(input == 0)
+            {
+                //이전 화면으로 이동
+            }
+            else
+            {
+                Console.WriteLine("잘못된 입력입니다");
+            }
+
+        }
+
+        void RefreshShopProducts()
+        {
+            Console.Clear();
+            Console.WriteLine();
+            Console.WriteLine("상점");
+            Console.WriteLine();
+            Console.WriteLine("[보유 골드]");
+            Console.WriteLine($"{playerState.Gold} G");
+            Console.WriteLine();
+            Console.WriteLine("[아이템 목록]");
+
+        }
+        void BuyProducts()
+        {
+            int input;
+            RefreshShopProducts();
+            if (products.Count == 0)
+            {
+                Console.WriteLine("현재 판매하고있는 물품이 없습니다.");
+            }
+            else
+            {
+                for (int i = 0; i < products.Count; i++)
+                {
+                    Console.WriteLine($"{i+1}. {products[i].ProductsName()}");
+                    Console.WriteLine();
+                }
+            }
+            Console.WriteLine("구매하고 싶은 아이템을 선택하세요 :");
+            Console.WriteLine();
+            Console.WriteLine("0 : 나가기");
+            input = int.Parse( Console.ReadLine());
+            switch (input)
+            {
+                case 0:
+                    break;
+                case 1:
+                    BuyItem(input);
+                    BuyProducts();
+                    break;
+                case 2:
+                    BuyItem(input);
+                    BuyProducts();
+                    break;
+                case 3:
+                    BuyItem(input);
+                    BuyProducts();
+                    break;
+                case 4:
+                    BuyItem(input);
+                    BuyProducts();
+                    break;
+                case 5:
+                    BuyItem(input);
+                    BuyProducts();
+                    break;
+                case 6:
+                    BuyItem(input);
+                    BuyProducts();
+                    break;
+
+            }
+        }
+
+        void BuyItem(int i)
+        {
+            if (products[i-1].IsBuy == true)
+            {
+                Console.WriteLine("이미 구매한 아이템 입니다.");
+                Thread.Sleep(1000);
+            }
+            else
+            {
+                if ((playerState.Gold - products[i - 1].Price) < 0)
+                {
+                    Console.WriteLine("Gold 가 부족합니다.");
+                    Thread.Sleep(1000);
+                }
+                else
+                {
+                    Console.WriteLine("구매를 완료했습니다.");
+                    Thread.Sleep(1000);
+                    playerState.Gold -= products[i - 1].Price;
+                    //구매 완료표시
+                    playerInventory.AddItem(products[i - 1]);
+                    products[i - 1].IsBuy = true;
+                }
+            }
+            
+        }
+
+        void SellProduct()
+        {
+            int input;
+            
+            List<ShopProduct> inventoryProducts = new List<ShopProduct>();
+            RefreshShopProducts();
+
+            for (int i = 0; i < playerInventory.items.Count; i++)
+            {
+                ItemToShopProduct(playerInventory.items[i], inventoryProducts);
+            }
+
+
+            if (inventoryProducts.Count == 0)
+            {
+                Console.WriteLine("판매할 아이템이 없습니다.");
+            }
+            else
+            {
+                for(int i = 0; i < inventoryProducts.Count; i++)
+                {
+                    Console.WriteLine($"{i+1}. {inventoryProducts[i].DisplayItem()} | {inventoryProducts[i].Price} ");
+                    Console.WriteLine();
+                }
+            }
+            
+            Console.WriteLine("판매하고 싶은 아이템을 선택하세요 :");
+            Console.WriteLine();
+            Console.WriteLine("0 : 나가기");
+            input = int.Parse(Console.ReadLine());
+            SellItem(input, inventoryProducts);
+            
+        }
+
+        void ItemToShopProduct(Item item, List<ShopProduct> inventoryProducts)
+        {
+            
+
+            for (int i = 0; i < products.Count; i++)
+            {
+                if (item.Name == products[i].Name)
+                {
+                    inventoryProducts.Add(new ShopProduct(item, products[i].Price));
+                }
+            }
+            
+               
+        }
+
+        void SellItem(int input, List<ShopProduct> inventoryProducts)
+        {
+            if(input == 0)
+            {
+                return;
+            }
+            else if(input > inventoryProducts.Count || input < 0)
+            {
+                Console.WriteLine("잘못된 입력입니다");
+                SellProduct();
+            }
+            else
+            {
+                playerState.Gold += (int)(inventoryProducts[input - 1].Price * 0.85f);
+                playerInventory.RemoveItem(inventoryProducts[input-1].Item);
+                inventoryProducts.RemoveAt(input - 1);
+                SellProduct();
+            }
+        }
+    }
+
+    public class ShopProduct : Item
+    {
+        public int Price;
+        public Item Item;
+        public bool IsBuy;
+        public ShopProduct(Item item, int price,bool isBuy = false) : base(item.Name, item.Stat, item.Type, item.Description)
+        {
+            Item = item;
+            Price = price;
+            IsBuy = isBuy;
+        }
+
+        public string ProductsName()
+        {
+            if (IsBuy)
+            {
+                return $"{DisplayItem()} | 구매 완료";
+            }
+            else
+            {
+                return $"{DisplayItem()} - 가격 : {Price}G";
+            }
+            
+        } 
     }
 }
