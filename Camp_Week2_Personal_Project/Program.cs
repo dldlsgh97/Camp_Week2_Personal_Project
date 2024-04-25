@@ -23,8 +23,8 @@ namespace Camp_Week2_Personal_Project
             playerState = new PlayerState(1, PlayerName, PlayerClass, 10, 5, 100, 1500);
 
             playerInventory = new Inventory(playerState);
-            
-            Item testItem1 = new Item("무쇠갑옷",5,ItemType.Armor, "무쇠로 만들어져 튼튼한 갑옷입니다.");
+
+            Item testItem1 = new Item("무쇠갑옷", 5, ItemType.Armor, "무쇠로 만들어져 튼튼한 갑옷입니다.");
             Item testItem2 = new Item("스파르타의 창", 7, ItemType.Wepon, "스파르타의 전사들이 사용했다는 전설의 창입니다.");
             Item testItem3 = new Item("낡은 검", 2, ItemType.Wepon, "쉽게 볼 수 있는 낡은 검 입니다.");
             playerInventory.AddItem(testItem1);
@@ -32,13 +32,13 @@ namespace Camp_Week2_Personal_Project
             playerInventory.AddItem(testItem3);
 
             shop = new Shop(playerState, playerInventory);
-            shop.AddProduct(new ShopProduct(new Item("수련자 갑옷", 5, ItemType.Armor, "수련에 도움을 주는 갑옷입니다."),1000));
-            shop.AddProduct(new ShopProduct(new Item("무쇠갑옷", 9, ItemType.Armor, "무쇠로 만들어져 튼튼한 갑옷입니다."), 1500,true));
+            shop.AddProduct(new ShopProduct(new Item("수련자 갑옷", 5, ItemType.Armor, "수련에 도움을 주는 갑옷입니다."), 1000));
+            shop.AddProduct(new ShopProduct(new Item("무쇠갑옷", 9, ItemType.Armor, "무쇠로 만들어져 튼튼한 갑옷입니다."), 1500));
             shop.AddProduct(new ShopProduct(new Item("스파르타의 갑옷", 15, ItemType.Armor, "스파르타의 전사들이 사용했다는 전설의 갑옷입니다."), 2000));
             shop.AddProduct(new ShopProduct(new Item("낡은 검", 2, ItemType.Wepon, "쉽게 볼 수 있는 낡은 검 입니다."), 600));
             shop.AddProduct(new ShopProduct(new Item("청동 도끼", 5, ItemType.Wepon, "어디선가 사용됐던거 같은 도끼입니다."), 1500));
-            shop.AddProduct(new ShopProduct(new Item("스파르타의 창", 7, ItemType.Wepon, "스파르타의 전사들이 사용했다는 전설의 창입니다."), 2000,true));
-            
+            shop.AddProduct(new ShopProduct(new Item("스파르타의 창", 7, ItemType.Wepon, "스파르타의 전사들이 사용했다는 전설의 창입니다."), 2000));
+
 
             while (true)
             {
@@ -100,9 +100,9 @@ namespace Camp_Week2_Personal_Project
 
 
 
-        static void Move()
+        static public void Move()
         {
-            
+
             int input;
             Console.Clear();
             Console.WriteLine("현재 모험가님이 이동할 수 있는곳은 아래의 장소입니다.");
@@ -114,12 +114,25 @@ namespace Camp_Week2_Personal_Project
             input = int.Parse(Console.ReadLine());
             if (input == 1)
             {
-                Console.WriteLine("상점 이동");
                 shop.DisplayProducts();
             }
             else if (input == 2)
             {
-                Console.WriteLine("사냥 필드 이동");
+                Console.Clear();
+                Console.WriteLine("사냥 필드 는 추후 오픈 예정입니다");
+                Thread.Sleep(1000);
+                Console.WriteLine("돌아가기 : 0");
+
+                int i = int.Parse(Console.ReadLine());
+                if (i == 0)
+                {
+                    Move();
+                }
+                else
+                {
+                    Console.WriteLine("잘못된 입력입니다");
+                }
+
             }
             else { Console.WriteLine("잘못된 입력입니다"); }
         }
@@ -127,28 +140,28 @@ namespace Camp_Week2_Personal_Project
         static void EquipManage()
         {
             InventoryRefesh();
-            
+
             int input = int.Parse(Console.ReadLine());
-            if(input == 0)
+            if (input == 0)
             {
                 return;
             }
 
             int index = input - 1;
-            if(index < 0 || index >= playerInventory.items.Count)
+            if (index < 0 || index >= playerInventory.items.Count)
             {
                 Console.WriteLine("잘못된 입력입니다");
                 Thread.Sleep(1000);
                 EquipManage();
             }
-            
+
             Item selectItem = playerInventory.items[index];
 
             bool isEquipped = playerState.IsEquipped(selectItem);
 
-            if(!isEquipped)
+            if (!isEquipped)
             {
-                playerState.EquipItem(selectItem);                
+                playerState.EquippedItemCheck(selectItem);
             }
             else
             {
@@ -180,7 +193,7 @@ namespace Camp_Week2_Personal_Project
                     Console.WriteLine();
                 }
 
-                
+
             }
             Console.WriteLine();
             Console.WriteLine("장착할 아이템을 선택하세요 :");
@@ -226,18 +239,18 @@ namespace Camp_Week2_Personal_Project
             int weponAttack = 0;
             int weponDefense = 0;
 
-            foreach(var item in equippedItems)
+            foreach (var item in equippedItems)
             {
-                if(item.Type == ItemType.Wepon)
+                if (item.Type == ItemType.Wepon)
                 {
                     weponAttack += item.Stat;
                 }
-                else if(item.Type == ItemType.Armor)
+                else if (item.Type == ItemType.Armor)
                 {
                     weponDefense += item.Stat;
                 }
             }
-            if(equippedItems.Count == 0)
+            if (equippedItems.Count == 0)
             {
                 Console.Clear();
                 Console.WriteLine();
@@ -263,7 +276,7 @@ namespace Camp_Week2_Personal_Project
                 Console.WriteLine();
                 Console.WriteLine($"LV : {Level}");
                 Console.WriteLine($"{Name} ({Class})");
-                Console.WriteLine($"공격력 : {Attack+ weponAttack} (+{weponAttack})");
+                Console.WriteLine($"공격력 : {Attack + weponAttack} (+{weponAttack})");
                 Console.WriteLine($"방어력 : {Defense + weponDefense} (+{weponDefense})");
                 Console.WriteLine($"체  력 : {MaxHp}");
                 Console.WriteLine($" Gold  : {Gold} G");
@@ -274,12 +287,12 @@ namespace Camp_Week2_Personal_Project
                 Console.WriteLine("원하시는 행동을 입력해주세요");
 
             }
-            
-            
+
+
         }
 
         public void EquipItem(Item item)
-        {
+        {           
             equippedItems.Add(item);
         }
 
@@ -294,6 +307,31 @@ namespace Camp_Week2_Personal_Project
         public List<Item> GetEquippedItems()
         {
             return equippedItems;
+        }
+
+        public void EquippedItemCheck(Item item)
+        {
+            ItemType type = item.Type;
+            if(equippedItems.Count == 0)
+            {
+                EquipItem(item);
+            }
+            else
+            {
+                for(int i = 0; i < equippedItems.Count;i++)
+                {
+                    if (item.Type == equippedItems[i].Type)
+                    {
+                        UnEquipItem(equippedItems[i]);
+                        EquipItem(item);
+                    }
+                    else
+                    {
+                        EquipItem(item);
+                    }
+                }
+            }
+            
         }
     }
 
@@ -320,7 +358,7 @@ namespace Camp_Week2_Personal_Project
 
         public int DesplayInventory()
         {
-            
+
             int input;
             RefreshInventory();
 
@@ -425,10 +463,10 @@ namespace Camp_Week2_Personal_Project
 
         public void DisplayProducts()
         {
-            
+
             int input;
             RefreshShopProducts();
-            if(products.Count == 0)
+            if (products.Count == 0)
             {
                 Console.WriteLine("현재 판매하고있는 물품이 없습니다.");
             }
@@ -440,7 +478,7 @@ namespace Camp_Week2_Personal_Project
                     Console.WriteLine();
                 }
             }
-            
+
             Console.WriteLine();
             Console.WriteLine("1. 아이템 구매");
             Console.WriteLine("2. 아이템 판매");
@@ -448,19 +486,20 @@ namespace Camp_Week2_Personal_Project
             Console.WriteLine();
             Console.WriteLine("원하는 행동을 입력해주세요");
             input = int.Parse(Console.ReadLine());
-            if(input == 1)
+            if (input == 1)
             {
                 //구매 로직
                 BuyProducts();
             }
-            else if(input == 2)
+            else if (input == 2)
             {
                 //판매 로직
                 SellProduct();
             }
-            else if(input == 0)
+            else if (input == 0)
             {
                 //이전 화면으로 이동
+
             }
             else
             {
@@ -493,14 +532,14 @@ namespace Camp_Week2_Personal_Project
             {
                 for (int i = 0; i < products.Count; i++)
                 {
-                    Console.WriteLine($"{i+1}. {products[i].ProductsName()}");
+                    Console.WriteLine($"{i + 1}. {products[i].ProductsName()}");
                     Console.WriteLine();
                 }
             }
             Console.WriteLine("구매하고 싶은 아이템을 선택하세요 :");
             Console.WriteLine();
             Console.WriteLine("0 : 나가기");
-            input = int.Parse( Console.ReadLine());
+            input = int.Parse(Console.ReadLine());
             switch (input)
             {
                 case 0:
@@ -535,7 +574,7 @@ namespace Camp_Week2_Personal_Project
 
         void BuyItem(int i)
         {
-            if (products[i-1].IsBuy == true)
+            if (products[i - 1].IsBuy == true)
             {
                 Console.WriteLine("이미 구매한 아이템 입니다.");
                 Thread.Sleep(1000);
@@ -557,13 +596,13 @@ namespace Camp_Week2_Personal_Project
                     products[i - 1].IsBuy = true;
                 }
             }
-            
+
         }
 
         void SellProduct()
         {
             int input;
-            
+
             List<ShopProduct> inventoryProducts = new List<ShopProduct>();
             RefreshShopProducts();
 
@@ -579,25 +618,23 @@ namespace Camp_Week2_Personal_Project
             }
             else
             {
-                for(int i = 0; i < inventoryProducts.Count; i++)
+                for (int i = 0; i < inventoryProducts.Count; i++)
                 {
-                    Console.WriteLine($"{i+1}. {inventoryProducts[i].DisplayItem()} | {inventoryProducts[i].Price} ");
+                    Console.WriteLine($"{i + 1}. {inventoryProducts[i].DisplayItem()} | {inventoryProducts[i].Price} ");
                     Console.WriteLine();
                 }
             }
-            
+
             Console.WriteLine("판매하고 싶은 아이템을 선택하세요 :");
             Console.WriteLine();
             Console.WriteLine("0 : 나가기");
             input = int.Parse(Console.ReadLine());
             SellItem(input, inventoryProducts);
-            
+
         }
 
         void ItemToShopProduct(Item item, List<ShopProduct> inventoryProducts)
         {
-            
-
             for (int i = 0; i < products.Count; i++)
             {
                 if (item.Name == products[i].Name)
@@ -605,17 +642,16 @@ namespace Camp_Week2_Personal_Project
                     inventoryProducts.Add(new ShopProduct(item, products[i].Price));
                 }
             }
-            
-               
         }
 
         void SellItem(int input, List<ShopProduct> inventoryProducts)
         {
-            if(input == 0)
+            if (input == 0)
             {
+                DisplayProducts();
                 return;
             }
-            else if(input > inventoryProducts.Count || input < 0)
+            else if (input > inventoryProducts.Count || input < 0)
             {
                 Console.WriteLine("잘못된 입력입니다");
                 SellProduct();
@@ -623,9 +659,23 @@ namespace Camp_Week2_Personal_Project
             else
             {
                 playerState.Gold += (int)(inventoryProducts[input - 1].Price * 0.85f);
-                playerInventory.RemoveItem(inventoryProducts[input-1].Item);
+                playerInventory.RemoveItem(inventoryProducts[input - 1].Item);
+                ChangeItemState(inventoryProducts[input - 1]);
                 inventoryProducts.RemoveAt(input - 1);
+                
                 SellProduct();
+            }
+        }
+
+        void ChangeItemState(ShopProduct soldItem)
+        {
+            Thread.Sleep(1000);
+            for (int i = 0; i < products.Count; i++)
+            {
+                if (soldItem.Name == products[i].Name)
+                {
+                    products[i].IsBuy = false;
+                }
             }
         }
     }
@@ -635,7 +685,7 @@ namespace Camp_Week2_Personal_Project
         public int Price;
         public Item Item;
         public bool IsBuy;
-        public ShopProduct(Item item, int price,bool isBuy = false) : base(item.Name, item.Stat, item.Type, item.Description)
+        public ShopProduct(Item item, int price, bool isBuy = false) : base(item.Name, item.Stat, item.Type, item.Description)
         {
             Item = item;
             Price = price;
@@ -652,7 +702,8 @@ namespace Camp_Week2_Personal_Project
             {
                 return $"{DisplayItem()} - 가격 : {Price}G";
             }
-            
-        } 
+
+        }
+
     }
 }
