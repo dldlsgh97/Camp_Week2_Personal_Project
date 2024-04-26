@@ -33,31 +33,27 @@
                 Level++;
                 Attack += 0.5f;
                 Defense += 1;
-                cleartime = 0;
                 Console.WriteLine($"플레이어의 레벨이 {Level - 1}에서 {Level}으로 레벨업 했습니다!");
             }
-            else if(Level == 2 && cleartime == 2)
+            else if(Level == 2 && cleartime == 3)
             {
                 Level++;
                 Attack += 0.5f;
                 Defense += 1;
-                cleartime = 0;
                 Console.WriteLine($"플레이어의 레벨이 {Level - 1}에서 {Level}으로 레벨업 했습니다!");
             }
-            else if( Level == 3 && cleartime == 3)
+            else if( Level == 3 && cleartime == 6)
             {
                 Level++;
                 Attack += 0.5f;
                 Defense += 1;
-                cleartime = 0;
                 Console.WriteLine($"플레이어의 레벨이 {Level - 1}에서 {Level}으로 레벨업 했습니다!");
             }
-            else if(Level == 4 && cleartime == 4)
+            else if(Level == 4 && cleartime == 10)
             {
                 Level++;
                 Attack += 0.5f;
                 Defense += 1;
-                cleartime = 0;
                 Console.WriteLine($"플레이어의 레벨이 {Level - 1}에서 {Level}으로 레벨업 했습니다!");
             }
             
