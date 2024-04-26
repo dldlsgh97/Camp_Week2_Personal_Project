@@ -148,9 +148,7 @@ namespace Camp_Week2_Personal_Project
                 {
                     Console.WriteLine("잘못된 접근입니다.");
                 }
-            }
-            
-
+            }          
         }
         static void Rest()
         {
