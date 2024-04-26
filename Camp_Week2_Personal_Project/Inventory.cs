@@ -23,8 +23,6 @@
 
         public int DesplayInventory()
         {
-
-            int input;
             RefreshInventory();
 
             Console.WriteLine();
@@ -32,9 +30,19 @@
             Console.WriteLine("1. 장착 관리");
             Console.WriteLine("0. 나가기");
             Console.WriteLine();
-            input = int.Parse(Console.ReadLine());
+            string userInput = Console.ReadLine();
+            int input;
+            if(int.TryParse(userInput,out input))
+            {
+                return input;
+            }
+            else
+            {
+                Console.WriteLine("잘못된 접근입니다.");
+            }
+            return 0;
 
-            return input;
+            
         }
         public void RefreshInventory()
         {

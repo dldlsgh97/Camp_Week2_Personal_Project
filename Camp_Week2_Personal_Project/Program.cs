@@ -65,44 +65,51 @@ namespace Camp_Week2_Personal_Project
             Console.WriteLine();
             Console.WriteLine();
             Console.Write("원하는 행동을 입력하세요 : ");
-            int inputNum = int.Parse(Console.ReadLine());
-            if (inputNum == 1)
+            
+            string userInput = Console.ReadLine();
+            int inputNum;
+            if(int.TryParse(userInput, out inputNum))
             {
-                //플레이어 상태창으로 이동
-                switch (playerState.DisplayPlayerState())
+                if (inputNum == 1)
                 {
-                    case 0:
-                        StartGame();
-                        break;
-                }
+                    //플레이어 상태창으로 이동
+                    switch (playerState.DisplayPlayerState())
+                    {
+                        case 0:
+                            StartGame();
+                            break;
+                    }
 
-            }
-            else if (inputNum == 2)
-            {
-                switch (playerInventory.DesplayInventory())
+                }
+                else if (inputNum == 2)
                 {
-                    case 1:
-                        //장착관리 페이지로 이동
-                        EquipManage();
-                        break;
-                    case 2:
-                        StartGame();
-                        break;
+                    switch (playerInventory.DesplayInventory())
+                    {
+                        case 1:
+                            //장착관리 페이지로 이동
+                            EquipManage();
+                            break;
+                        case 2:
+                            StartGame();
+                            break;
+                    }
+                }
+                else if (inputNum == 3)
+                {
+                    //플레이어가 이동할수 있는 선택지 선택창으로 이동
+                    Move();
+                }
+                else if (inputNum == 4)
+                {
+                    StartRest();
+                }
+                else
+                {
+                    Console.WriteLine("잘못된 입력입니다!");
                 }
             }
-            else if (inputNum == 3)
-            {
-                //플레이어가 이동할수 있는 선택지 선택창으로 이동
-                Move();
-            }
-            else if(inputNum == 4)
-            {
-                StartRest();
-            }
-            else
-            {
-                Console.WriteLine("잘못된 입력입니다!");
-            }
+
+            
         }
 
         static void StartRest()
@@ -114,30 +121,35 @@ namespace Camp_Week2_Personal_Project
             Console.WriteLine("0. 나가기");
             Console.WriteLine();
             Console.WriteLine("원하는 행동을 입력해 주세요");
-            int input = int.Parse(Console.ReadLine());
-            if(input == 1)
+            string userInput = Console.ReadLine();
+            int input;
+            if( int.TryParse(userInput, out input))
             {
-                if (playerState.Gold < 500)
+                if (input == 1)
                 {
-                    Console.WriteLine("보유금이 부족해서 휴식을 취하지 못했습니다.");
-                    Thread.Sleep(1000);
-                    return;
+                    if (playerState.Gold < 500)
+                    {
+                        Console.WriteLine("보유금이 부족해서 휴식을 취하지 못했습니다.");
+                        Thread.Sleep(1000);
+                        return;
+                    }
+                    else
+                    {
+                        Rest();
+                    }
+
                 }
+                else if (input == 0)
+                {
+                    StartGame();
+                }
+
                 else
                 {
-                    Rest();
+                    Console.WriteLine("잘못된 접근입니다.");
                 }
-                
             }
-            else if(input == 0)
-            {
-                StartGame();
-            }
-                
-            else
-            {
-                Console.WriteLine("잘못된 접근입니다.");
-            }
+            
 
         }
         static void Rest()
@@ -160,47 +172,54 @@ namespace Camp_Week2_Personal_Project
             Console.WriteLine();
             Console.WriteLine("원하는 장소를 입력해주세요");
             Console.WriteLine("나가기 : 0");
-            input = int.Parse(Console.ReadLine());
-            if (input == 1)
+            string userInput = Console.ReadLine();
+            if( int.TryParse(userInput, out input))
             {
-                shop.DisplayProducts();
-            }
-            else if (input == 2)
-            {
-                dungeon.DungeonEntrance();
-
-                int i = int.Parse(Console.ReadLine());
-                if (i == 0)
+                if (input == 1)
                 {
-                    StartGame();
+                    shop.DisplayProducts();
                 }
-                else
+                else if (input == 2)
                 {
-                    Console.WriteLine("잘못된 입력입니다");
-                }
+                    dungeon.DungeonEntrance();
 
-            }
-            else { Console.WriteLine("잘못된 입력입니다"); }
+                    int i = int.Parse(Console.ReadLine());
+                    if (i == 0)
+                    {
+                        StartGame();
+                    }
+                    else
+                    {
+                        Console.WriteLine("잘못된 입력입니다");
+                    }
+
+                }
+                else { Console.WriteLine("잘못된 입력입니다"); }
+            }                        
         }
 
         static void EquipManage()
         {
             InventoryRefesh();
-
-            int input = int.Parse(Console.ReadLine());
-            if (input == 0)
+            string userInput = Console.ReadLine();
+            int input;
+            int index = 0;
+            if(int.TryParse(userInput, out input))
             {
-                return;
-            }
+                if (input == 0)
+                {
+                    return;
+                }
 
-            int index = input - 1;
-            if (index < 0 || index >= playerInventory.items.Count)
-            {
-                Console.WriteLine("잘못된 입력입니다");
-                Thread.Sleep(1000);
-                EquipManage();
+                index = input - 1;
+                if (index < 0 || index >= playerInventory.items.Count)
+                {
+                    Console.WriteLine("잘못된 입력입니다");
+                    Thread.Sleep(1000);
+                    EquipManage();
+                }
             }
-
+            
             Item selectItem = playerInventory.items[index];
 
             bool isEquipped = playerState.IsEquipped(selectItem);

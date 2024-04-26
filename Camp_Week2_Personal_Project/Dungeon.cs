@@ -23,29 +23,34 @@
             Console.WriteLine("3. 어려움 | 권장 방어력 : 17");
             Console.WriteLine();
             Console.WriteLine("원하는 행동을 입력하세요(나가기 : 0)");
-            int input = int.Parse(Console.ReadLine());
-            if(input == 0)
+            string userInput = Console.ReadLine();
+            int input;
+            if(int.TryParse(userInput, out input))
             {
-                Program.Move();
+                if (input == 0)
+                {
+                    Program.Move();
+                }
+                else if (input == 1)
+                {
+                    EnterDungeon(playerState.Defense, 1);
+                }
+                else if (input == 2)
+                {
+                    EnterDungeon(playerState.Defense, 2);
+                }
+                else if (input == 3)
+                {
+                    EnterDungeon(playerState.Defense, 3);
+                }
+                else
+                {
+                    Console.WriteLine("잘못된 입력입니다.");
+                    Thread.Sleep(100);
+                    DungeonEntrance();
+                }
             }
-            else if(input == 1)
-            {
-                EnterDungeon(playerState.Defense, 1);
-            }
-            else if (input == 2)
-            {
-                EnterDungeon(playerState.Defense, 2);
-            }
-            else if (input == 3)
-            {
-                EnterDungeon(playerState.Defense, 3);
-            }
-            else
-            {
-                Console.WriteLine("잘못된 입력입니다.");
-                Thread.Sleep(100);
-                DungeonEntrance();
-            }
+            
         }
         public void EnterDungeon(int playerDefenseStat, int difficulty)
         {
@@ -94,10 +99,7 @@
                     Console.WriteLine($"플레이어의 현재 체력 : {playerState.Hp}");
                     Console.WriteLine("아쉽지만 방어력을 올려서 도전해 보세요!");
                     Console.WriteLine();
-                    Console.WriteLine("돌아가기 : 0");
-                    int input = int.Parse(Console.ReadLine());
-                    if (input == 0) { DungeonEntrance(); }
-                    else { Console.WriteLine("잘못된 접근입니다"); }
+                    
                 }
                 else
                 {
@@ -105,10 +107,7 @@
                     Console.WriteLine("던전의 권장 방어력보다 플레이어의 방어력이 낮아 보상을 획득하지 못했습니다");
                     Console.WriteLine("아쉽지만 방어력을 올려서 도전해 보세요!");
                     Console.WriteLine();
-                    Console.WriteLine("돌아가기 : 0");
-                    int input = int.Parse(Console.ReadLine());
-                    if (input == 0) { DungeonEntrance(); }
-                    else { Console.WriteLine("잘못된 접근입니다"); }
+                    
                 }
             }
             else
@@ -125,14 +124,20 @@
                 Console.WriteLine($"현재 보유하고있는 Gold : {playerState.Gold}G");
                 Console.WriteLine();
                 clearTime++;
-                playerState.LevelUp(clearTime);
-                Console.WriteLine("돌아가기 : 0");
-                
-                int input = int.Parse( Console.ReadLine() );
+                playerState.LevelUp(clearTime);              
+            }
+            
+            Console.WriteLine("돌아가기 : 0");
+            string userInput = Console.ReadLine();
+            int input;
+            if(int.TryParse(userInput, out input))
+            {
                 if (input == 0) { DungeonEntrance(); }
                 else { Console.WriteLine("잘못된 접근입니다"); }
-
             }
+            
+
+
         }
 
         int CalculateAdditionalReward(int playerDefense)

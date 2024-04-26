@@ -20,8 +20,6 @@
 
         public void DisplayProducts()
         {
-
-            int input;
             RefreshShopProducts();
             if (products.Count == 0)
             {
@@ -42,26 +40,31 @@
             Console.WriteLine("0. 나가기");
             Console.WriteLine();
             Console.WriteLine("원하는 행동을 입력해주세요");
-            input = int.Parse(Console.ReadLine());
-            if (input == 1)
+            string userInput = Console.ReadLine();
+            int input;
+            if (int.TryParse(userInput,out input))
             {
-                //구매 로직
-                BuyProducts();
-            }
-            else if (input == 2)
-            {
-                //판매 로직
-                SellProduct();
-            }
-            else if (input == 0)
-            {
-                //이전 화면으로 이동
+                if (input == 1)
+                {
+                    //구매 로직
+                    BuyProducts();
+                }
+                else if (input == 2)
+                {
+                    //판매 로직
+                    SellProduct();
+                }
+                else if (input == 0)
+                {
+                    //이전 화면으로 이동
 
+                }
+                else
+                {
+                    Console.WriteLine("잘못된 입력입니다");
+                }
             }
-            else
-            {
-                Console.WriteLine("잘못된 입력입니다");
-            }
+                
 
         }
 
@@ -96,37 +99,41 @@
             Console.WriteLine("구매하고 싶은 아이템을 선택하세요 :");
             Console.WriteLine();
             Console.WriteLine("0 : 나가기");
-            input = int.Parse(Console.ReadLine());
-            switch (input)
+            string userInput = Console.ReadLine();
+            if(int.TryParse(userInput,out input))
             {
-                case 0:
-                    break;
-                case 1:
-                    BuyItem(input);
-                    BuyProducts();
-                    break;
-                case 2:
-                    BuyItem(input);
-                    BuyProducts();
-                    break;
-                case 3:
-                    BuyItem(input);
-                    BuyProducts();
-                    break;
-                case 4:
-                    BuyItem(input);
-                    BuyProducts();
-                    break;
-                case 5:
-                    BuyItem(input);
-                    BuyProducts();
-                    break;
-                case 6:
-                    BuyItem(input);
-                    BuyProducts();
-                    break;
+                switch (input)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        BuyItem(input);
+                        BuyProducts();
+                        break;
+                    case 2:
+                        BuyItem(input);
+                        BuyProducts();
+                        break;
+                    case 3:
+                        BuyItem(input);
+                        BuyProducts();
+                        break;
+                    case 4:
+                        BuyItem(input);
+                        BuyProducts();
+                        break;
+                    case 5:
+                        BuyItem(input);
+                        BuyProducts();
+                        break;
+                    case 6:
+                        BuyItem(input);
+                        BuyProducts();
+                        break;
 
+                }
             }
+            
         }
 
         void BuyItem(int i)
@@ -185,8 +192,12 @@
             Console.WriteLine("판매하고 싶은 아이템을 선택하세요 :");
             Console.WriteLine();
             Console.WriteLine("0 : 나가기");
-            input = int.Parse(Console.ReadLine());
-            SellItem(input, inventoryProducts);
+            string userInput = Console.ReadLine();
+            if(int.TryParse(userInput, out input))
+            {
+                SellItem(input, inventoryProducts);
+            }
+            
 
         }
 

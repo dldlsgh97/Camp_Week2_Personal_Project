@@ -64,10 +64,15 @@
         }
         public int DisplayPlayerState()
         {
-            int input;
             RefreshPlayerState();
-            input = int.Parse(Console.ReadLine());
-            return input;
+            string userInput = Console.ReadLine();
+            int input;
+            if(int.TryParse(userInput, out input))
+            {
+                return input;
+            }
+            return -1;
+            
         }
 
         public void RefreshPlayerState()
