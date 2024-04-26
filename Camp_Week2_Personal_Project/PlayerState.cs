@@ -134,7 +134,7 @@
 
         public void EquipItem(Item item)
         {           
-            equippedItems.Add(item);
+            equippedItems.Add(item);           
         }
 
         public void UnEquipItem(Item item)

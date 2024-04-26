@@ -229,8 +229,8 @@
                 playerState.Gold += (int)(inventoryProducts[input - 1].Price * 0.85f);
                 playerInventory.RemoveItem(inventoryProducts[input - 1].Item);
                 ChangeItemState(inventoryProducts[input - 1]);
-                inventoryProducts.RemoveAt(input - 1);
-                
+                playerState.UnEquipItem(inventoryProducts[input - 1].Item);
+                inventoryProducts.RemoveAt(input - 1);               
                 SellProduct();
             }
         }
