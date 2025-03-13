@@ -73,7 +73,7 @@
         - 이렇게 되면 코드가 많이 길어지고 클래스를 파악하기 힘들다.
     - 해결 후
         
-        ![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/355f39fe-2ef3-4d84-8da2-47ab7ff7b36f/78dca835-b861-44c3-8a8c-c61e0401ff06/Untitled.png)
+        ![Image](https://github.com/user-attachments/assets/03908511-b3d9-4d7d-a58d-2ca3ef205802)
         
         - 여러가지 클래스들을 각각의 파일로 분할해서 따로 저장한다.
         - 이렇게 되면 각각의 클래스를 구분하기 편해지고 관리도 쉬워진다.
